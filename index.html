@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabsl's Rechner</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: linear-gradient(to bottom right, #a855f7, #fb923c);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .card {
+      max-width: 400px;
+      width: 100%;
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .display {
+      text-align: right;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      font-family: monospace;
+      padding: 1rem;
+      border-radius: 1rem;
+      background: linear-gradient(to right, #e9d5ff, #fed7aa);
+      color: #111827;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #4b5563;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .btn {
+      background: linear-gradient(to right, #9333ea, #fb923c);
+      color: white;
+      font-weight: bold;
+      padding: 1rem;
+      border: none;
+      border-radius: 1rem;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title">Fabsl's Rechner</div>
+    <div id="display" class="display">0</div>
+    <div id="buttons" class="grid"></div>
+  </div>
+
+  <script>
+    const defaultButtons = [
+      ["C", "÷", "×", "←"],
+      ["7", "8", "9", "-"],
+      ["4", "5", "6", "×"],
+      ["1", "2", "3", "÷"],
+      ["0", ".", "2nd", "="]
+    ];
+
+    const secondButtons = [
+      ["C", "^", "%", "←"],
+      ["sin", "cos", "tan", "ln"],
+      ["log", "π", "e", "+/-"],
+      ["(", ")", "×", "÷"],
+      ["√", "^2", "2nd", "="]
+    ];
+
+    let input = "";
+    let second = false;
+
+    const display = document.getElementById("display");
+    const buttonsContainer = document.getElementById("buttons");
+
+    function updateButtons() {
+      buttonsContainer.innerHTML = "";
+      const buttons = second ? secondButtons : defaultButtons;
+      buttons.flat().forEach(btn => {
+        const button = document.createElement("button");
+        button.textContent = btn;
+        button.className = "btn";
+        button.onclick = () => handleClick(btn);
+        buttonsContainer.appendChild(button);
+      });
+    }
+
+    function handleClick(value) {
+      if (value === "2nd") {
+        second = !second;
+        updateButtons();
+      } else if (value === "C") {
+        input = "";
+      } else if (value === "←") {
+        input = input.slice(0, -1);
+      } else if (value === "=") {
+        try {
+          input = eval(input.replace(/÷/g, "/").replace(/×/g, "*")).toString();
+        } catch {
+          input = "Error";
+        }
+      } else if (value === "√") {
+        try {
+          input = Math.sqrt(eval(input)).toString();
+        } catch {
+          input = "Error";
+        }
+      } else if (value === "^2") {
+        try {
+          input = Math.pow(eval(input), 2).toString();
+        } catch {
+          input = "Error";
+        }
+      } else {
+        input += value;
+      }
+      display.textContent = input || "0";
+    }
+
+    updateButtons();
+  </script>
+</body>
+</html>
